@@ -54,3 +54,8 @@ uint64_t memory_free(void)
 {
     return (uint64_t)(heap_end - heap_ptr);
 }
+
+uint64_t memory_total(void)
+{
+    return HEAP_SIZE;
+}

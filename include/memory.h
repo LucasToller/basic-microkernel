@@ -4,12 +4,13 @@
 /* Inicializa o heap */
 void memory_init(void);
 
-/* Alocação simples */
+/* Alocação dinâmica no heap */
 void *kmalloc(uint64_t size);
 
-/* Liberação (opcional — não reutiliza ainda) */
+/* Liberação de memória */
 void kfree(void *ptr);
 
-/* Informações */
+/* Estatísticas do heap */
 uint64_t memory_used(void);
 uint64_t memory_free(void);
+uint64_t memory_total(void);
