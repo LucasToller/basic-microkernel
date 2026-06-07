@@ -1,8 +1,7 @@
 #include "task.h"
 #include "scheduler.h"
 #include "memory.h"
-
-extern void uart_print(const char*);
+#include "uart.h"
 
 /*   Tasks   */
 
