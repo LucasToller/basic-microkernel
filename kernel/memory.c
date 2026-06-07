@@ -5,15 +5,29 @@
 #define HEAP_START 0x80400000UL
 #define HEAP_SIZE  (8 * 1024 * 1024)   // 8 MB
 
+typedef struct block
+{
+    uint64_t size;
+    int free;
+    struct block *next;
+} block_t;
+
 static uint8_t *heap_base = (uint8_t*)HEAP_START;
 static uint8_t *heap_end  = (uint8_t*)(HEAP_START + HEAP_SIZE);
 static uint8_t *heap_ptr;
+
+static block_t *free_list;
 
 /*   Inicialização   */
 
 void memory_init(void)
 {
     heap_ptr = heap_base;
+
+    free_list = (block_t*)heap_base;
+    free_list->size = HEAP_SIZE - sizeof(block_t);
+    free_list->free = 1;
+    free_list->next = 0;
 }
 
 /*   Alocador bump   */
