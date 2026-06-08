@@ -28,7 +28,7 @@ Também foram implementadas as funções:
 
 As stacks das tasks são alocadas dinamicamente com `kmalloc()`.
 
-A função `xTaskCreate()` cria a task e aloca sua stack.
+A função `xTaskCreate()` cria a task e aloca sua stack.  
 A função `xTaskDelete()` remove a task e libera sua stack com `kfree()`.
 
 ## Testes implementados
@@ -48,13 +48,14 @@ Foram adicionados testes para demonstrar:
 ```bash
 sudo apt update
 sudo apt install -y make gcc-riscv64-unknown-elf qemu-system-misc
+```
 
 ## Compilação
 
+Dentro da pasta do projeto, execute:
+
 ```bash
-
 rm -f *.o kernel.elf
-
 make
 ```
 
@@ -67,7 +68,7 @@ qemu-system-riscv64 -machine virt -kernel kernel.elf -nographic
 Para executar por tempo limitado e salvar a saída:
 
 ```bash
-timeout 8s qemu-system-riscv64 -machine virt -kernel kernel.elf -nographic > qemu_output.txt 2>&1 || true
+timeout 2s qemu-system-riscv64 -machine virt -kernel kernel.elf -nographic > qemu_output.txt 2>&1 || true
 sed -n '1,130p' qemu_output.txt
 ```
 
