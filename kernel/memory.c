@@ -74,11 +74,15 @@ void *kmalloc(uint64_t size)
     return 0;
 }
 
-/*   Liberação de memória - implementação temporária   */
+/*   Liberação de memória   */
 
 void kfree(void *ptr)
 {
-    (void)ptr;
+    if (ptr == 0)
+        return;
+
+    block_t *block = (block_t*)((uint8_t*)ptr - sizeof(block_t));
+    block->free = 1;
 }
 
 /*   Estatísticas do heap baseadas na lista de blocos   */
