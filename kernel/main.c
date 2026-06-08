@@ -35,7 +35,7 @@ static void memory_allocator_test(void)
 
     void *d = kmalloc(200);
 
-    uart_print("Alocado bloco D=200 para testar reutilizacao do espaco de B\n");
+    uart_print("Alocacao D=200 apos liberar B\n");
 
     if (d == b)
         uart_print("Resultado: D reutilizou o bloco liberado por B\n");
@@ -48,7 +48,7 @@ static void memory_allocator_test(void)
     kfree(d);
     kfree(c);
 
-    uart_print("Blocos A, D e C liberados para testar coalescencia\n");
+    uart_print("Blocos A, D e C liberados\n");
     print_heap_stats("Depois da coalescencia");
 }
 

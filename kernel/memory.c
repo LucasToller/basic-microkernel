@@ -63,14 +63,10 @@ void *kmalloc(uint64_t size)
     {
         if (current->free && current->size >= size)
         {
-            /*
-             * Se o bloco livre for maior que o necessário,
-             * ele é dividido em dois blocos:
-             * - um bloco ocupado para atender à alocação;
-             * - um novo bloco livre com o espaço restante.
-             */
+
             if (current->size >= size + sizeof(block_t) + 8)
             {
+                /* Divide o bloco quando há espaço suficiente para criar outro bloco livre. */
                 block_t *new_block = (block_t*)((uint8_t*)current + sizeof(block_t) + size);
 
                 new_block->size = current->size - size - sizeof(block_t);
