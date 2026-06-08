@@ -13,60 +13,106 @@ typedef struct block
 } block_t;
 
 static uint8_t *heap_base = (uint8_t*)HEAP_START;
-static uint8_t *heap_end  = (uint8_t*)(HEAP_START + HEAP_SIZE);
-static uint8_t *heap_ptr;
-
 static block_t *free_list;
 
-/*   Inicialização   */
+static uint64_t align8(uint64_t size)
+{
+    return (size + 7) & ~7ULL;
+}
+
+/*   Inicialização da lista livre   */
 
 void memory_init(void)
 {
-    heap_ptr = heap_base;
-
     free_list = (block_t*)heap_base;
     free_list->size = HEAP_SIZE - sizeof(block_t);
     free_list->free = 1;
     free_list->next = 0;
 }
 
-/*   Alocador bump   */
+/*   Alocação com Free List e política First Fit   */
 
 void *kmalloc(uint64_t size)
 {
     if (size == 0)
         return 0;
 
-    /* Alinhamento para 8 bytes */
-    size = (size + 7) & ~7ULL;
+    size = align8(size);
 
-    if (heap_ptr + size > heap_end)
-        return 0;   // out of memory
+    block_t *current = free_list;
 
-    void *ptr = heap_ptr;
-    heap_ptr += size;
+    while (current != 0)
+    {
+        if (current->free && current->size >= size)
+        {
+            /*
+             * Se o bloco livre for maior que o necessário,
+             * ele é dividido em dois blocos:
+             * - um bloco ocupado para atender à alocação;
+             * - um novo bloco livre com o espaço restante.
+             */
+            if (current->size >= size + sizeof(block_t) + 8)
+            {
+                block_t *new_block = (block_t*)((uint8_t*)current + sizeof(block_t) + size);
 
-    return ptr;
+                new_block->size = current->size - size - sizeof(block_t);
+                new_block->free = 1;
+                new_block->next = current->next;
+
+                current->size = size;
+                current->next = new_block;
+            }
+
+            current->free = 0;
+
+            return (void*)((uint8_t*)current + sizeof(block_t));
+        }
+
+        current = current->next;
+    }
+
+    return 0;
 }
 
-/*   Free mínimo   */
+/*   Liberação de memória - implementação temporária   */
 
 void kfree(void *ptr)
 {
-    /* Implementação mínima: não faz nada */
     (void)ptr;
 }
 
-/*   Estatísticas   */
+/*   Estatísticas do heap baseadas na lista de blocos   */
 
 uint64_t memory_used(void)
 {
-    return (uint64_t)(heap_ptr - heap_base);
+    uint64_t used = 0;
+    block_t *current = free_list;
+
+    while (current != 0)
+    {
+        if (!current->free)
+            used += current->size + sizeof(block_t);
+
+        current = current->next;
+    }
+
+    return used;
 }
 
 uint64_t memory_free(void)
 {
-    return (uint64_t)(heap_end - heap_ptr);
+    uint64_t free_bytes = 0;
+    block_t *current = free_list;
+
+    while (current != 0)
+    {
+        if (current->free)
+            free_bytes += current->size + sizeof(block_t);
+
+        current = current->next;
+    }
+
+    return free_bytes;
 }
 
 uint64_t memory_total(void)
