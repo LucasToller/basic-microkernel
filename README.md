@@ -43,10 +43,15 @@ Foram adicionados testes para demonstrar:
 * estatísticas do heap;
 * alocação e liberação de stack de task.
 
+## Pré-requisitos
+
+```bash
+sudo apt update
+sudo apt install -y make gcc-riscv64-unknown-elf qemu-system-misc
+
 ## Compilação
 
 ```bash
-cd ~/BasicMicrokernel
 
 rm -f *.o kernel.elf
 
