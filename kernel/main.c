@@ -25,7 +25,7 @@ static void memory_allocator_test(void)
     void *b = kmalloc(256);
     void *c = kmalloc(128);
 
-    uart_print("Alocadas tres areas de memoria: A=128, B=256, C=128\n");
+    uart_print("Alocacoes: A=128, B=256, C=128\n");
     print_heap_stats("Depois das alocacoes");
 
     kfree(b);
@@ -38,9 +38,9 @@ static void memory_allocator_test(void)
     uart_print("Alocacao D=200 apos liberar B\n");
 
     if (d == b)
-        uart_print("Resultado: D reutilizou o bloco liberado por B\n");
+        uart_print("Resultado: D reutilizou o bloco B\n");
     else
-        uart_print("Resultado: D nao reutilizou exatamente o mesmo endereco de B\n");
+        uart_print("Resultado: D foi alocado em outro endereco\n");
 
     print_heap_stats("Depois de alocar D");
 
@@ -113,7 +113,7 @@ static void task_stack_test(void)
 
         xTaskDelete(temp_id);
 
-        uart_print("Task temporaria removida e stack liberada com kfree\n");
+        uart_print("Task temporaria removida e stack liberada\n");
         print_heap_stats("Depois de remover task temporaria");
     }
     else
