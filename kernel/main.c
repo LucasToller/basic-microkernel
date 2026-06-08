@@ -17,7 +17,7 @@ static void print_heap_stats(const char *label)
 
 static void memory_allocator_test(void)
 {
-    uart_print("\n=== Teste do Free List Allocator ===\n");
+    uart_print("\n=== Validacao do Free List Allocator ===\n");
 
     print_heap_stats("Estado inicial do heap");
 
@@ -100,7 +100,7 @@ void task_temp()
 
 static void task_stack_test(void)
 {
-    uart_print("\n=== Teste de stack dinamica de task ===\n");
+    uart_print("\n=== Validacao de stack dinamica de task ===\n");
 
     print_heap_stats("Antes de criar task temporaria");
 
@@ -128,7 +128,12 @@ void kernel_main()
 {
     memory_init();
 
+    /* Cenários de validação do allocator */
+
     memory_allocator_test();
+
+    /* Validação da integração entre tasks e o novo allocator */
+
     task_stack_test();
 
     uart_print("\n=== Kernel ===\n");
