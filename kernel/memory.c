@@ -20,6 +20,24 @@ static uint64_t align8(uint64_t size)
     return (size + 7) & ~7ULL;
 }
 
+static void coalesce_free_blocks(void)
+{
+    block_t *current = free_list;
+
+    while (current != 0 && current->next != 0)
+    {
+        if (current->free && current->next->free)
+        {
+            current->size += sizeof(block_t) + current->next->size;
+            current->next = current->next->next;
+        }
+        else
+        {
+            current = current->next;
+        }
+    }
+}
+
 /*   Inicialização da lista livre   */
 
 void memory_init(void)
@@ -74,7 +92,7 @@ void *kmalloc(uint64_t size)
     return 0;
 }
 
-/*   Liberação de memória   */
+/*   Liberação de memória com coalescência   */
 
 void kfree(void *ptr)
 {
@@ -83,6 +101,8 @@ void kfree(void *ptr)
 
     block_t *block = (block_t*)((uint8_t*)ptr - sizeof(block_t));
     block->free = 1;
+
+    coalesce_free_blocks();
 }
 
 /*   Estatísticas do heap baseadas na lista de blocos   */
