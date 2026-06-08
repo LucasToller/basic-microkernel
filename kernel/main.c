@@ -90,6 +90,38 @@ void task2()
     }
 }
 
+void task_temp()
+{
+    while (1)
+    {
+        yield();
+    }
+}
+
+static void task_stack_test(void)
+{
+    uart_print("\n=== Teste de stack dinamica de task ===\n");
+
+    print_heap_stats("Antes de criar task temporaria");
+
+    int temp_id = xTaskCreate(task_temp, 1024, 1);
+
+    if (temp_id >= 0)
+    {
+        uart_print("Task temporaria criada com stack de 1024 bytes\n");
+        print_heap_stats("Depois de criar task temporaria");
+
+        xTaskDelete(temp_id);
+
+        uart_print("Task temporaria removida e stack liberada com kfree\n");
+        print_heap_stats("Depois de remover task temporaria");
+    }
+    else
+    {
+        uart_print("Falha ao criar task temporaria\n");
+    }
+}
+
 /*   Kernel   */
 
 void kernel_main()
@@ -97,6 +129,7 @@ void kernel_main()
     memory_init();
 
     memory_allocator_test();
+    task_stack_test();
 
     uart_print("\n=== Kernel ===\n");
 
