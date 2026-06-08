@@ -5,6 +5,8 @@
 *.iso
 *.img
 *.map
+qemu.log
+qemu_output.txt
 
 # Editor
 .vscode/
